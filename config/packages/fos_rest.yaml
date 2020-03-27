@@ -6,8 +6,8 @@ fos_rest:
   view:
     formats: {json: true, xml: false}
     view_response_listener: true
-  exception:
-    exception_controller: 'fos_rest.exception.controller:showAction'
+#  exception:
+    #exception_controller: 'fos_rest.exception.controller:showAction'
   serializer:
     serialize_null: true
   body_converter:
@@ -15,11 +15,13 @@ fos_rest:
     validate: true
     validation_errors_argument: validationErrors
 #        view_response_listener:  true
-#    exception:
-#        codes:
-#            App\Exception\MyException: 403
-#        messages:
-#            App\Exception\MyException: Forbidden area.
+  exception:
+    codes:
+      App\Exception\RessourceValidationException: 400
+      Exception: 401
+    messages:
+      App\Exception\RessourceValidationException: true
+      Exception: true
   format_listener:
     rules:
       - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json ] }

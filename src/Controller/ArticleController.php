@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Exception\RessourceValidationException;
 use App\Form\Type\ArticleType;
 use App\Representation\Articles;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -95,14 +96,20 @@ class ArticleController extends AbstractFOSRestController
      *     }
      * )
      *
+     * @throws RessourceValidationException
      */
     public function createFOS(Article $article, ConstraintViolationList $validationErrors) : View
     {
         if(count($validationErrors) > 0){
-            return $this->view(
-                $validationErrors,
-                Response::HTTP_BAD_REQUEST
-            );
+            $message = 'This JSON sent contains invalid data :';
+            foreach ($validationErrors as $validationError){
+                $message .= sprintf(
+                    "Field %s: %s",
+                    $validationError->getPropertyPath(),
+                    $validationError->getMessage()
+                );
+            }
+            throw new RessourceValidationException($message);
         }
 
         $em = $this->getDoctrine()->getManager();
