@@ -48,7 +48,7 @@ class ArticleController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *      path="/api/articles",
+     *      path="/api/articles_create",
      *      name="api_article_create"
      * )
      * @Rest\View(statusCode="201")
@@ -84,7 +84,7 @@ class ArticleController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *      path="/api/articles_fos",
+     *      path="/api/articles",
      *      name="api_article_create_fos"
      * )
      * @Rest\View(statusCode="201")
@@ -98,7 +98,7 @@ class ArticleController extends AbstractFOSRestController
      *
      * @throws RessourceValidationException
      */
-    public function createFOS(Article $article, ConstraintViolationList $validationErrors) : View
+    public function postArticle(Article $article, ConstraintViolationList $validationErrors) : View
     {
         if(count($validationErrors) > 0){
             $message = 'This JSON sent contains invalid data :';
@@ -126,6 +126,76 @@ class ArticleController extends AbstractFOSRestController
                 ),
             ]
         );
+    }
+
+    /**
+     * @Rest\Put(
+     *     path="/api/articles/{id}",
+     *     name="api_article_update",
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @ParamConverter(
+     *     "articleNew",
+     *     converter="fos_rest.request_body",
+     *     options={
+     *          "validator" = {"groups"="Update"}
+     *     }
+     * )
+     *
+     * @Rest\View(statusCode="200")
+     *
+     * @throws RessourceValidationException
+     */
+    public function putArticleAction(Article $article, Article $articleNew, ConstraintViolationList $validationErrors) : View
+    {
+        dump($article);
+        if(count($validationErrors) > 0){
+            $message = 'This JSON sent contains invalid data :';
+            foreach ($validationErrors as $validationError){
+                $message .= sprintf(
+                    "Field %s: %s",
+                    $validationError->getPropertyPath(),
+                    $validationError->getMessage()
+                );
+            }
+            throw new RessourceValidationException($message);
+        }
+
+        $article->setTitle($articleNew->getTitle());
+        $article->setContent($articleNew->getContent());
+        $article->setAuthor($articleNew->getAuthor());
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+        return $this->view(
+            $article,
+            Response::HTTP_OK,
+            [
+                'Location' => $this->generateUrl(
+                    'api_article_show',
+                    ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL]
+                ),
+            ]
+        );
+    }
+
+    /**
+     * @Rest\Delete(
+     *     path="/api/articles/{id}",
+     *     name="api_article_delete",
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     */
+    public function deleteArticleAction(Article $article) : View
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($article);
+        $em->flush();
+
+        return $this->view(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
