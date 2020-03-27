@@ -3,9 +3,16 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
+ * @ORM\Table()
+ *
+ * @ExclusionPolicy("all")
+ *
  */
 class Article
 {
@@ -13,21 +20,31 @@ class Article
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose()
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank(groups={"Create"})
+     *
+     * @Serializer\Expose()
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(groups={"Create"})
+     *
+     * @Serializer\Expose()
      */
     private $content;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Author", inversedBy="articles", cascade={"persist"})
+     *
+     * @Serializer\Expose()
      */
     private $author;
 
