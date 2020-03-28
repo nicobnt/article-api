@@ -79,6 +79,7 @@ class Article
      * @Assert\NotBlank(groups={"Create"})
      *
      * @Serializer\Expose()
+     * @Serializer\Since("1.0")
      */
     private $title;
 
@@ -87,6 +88,7 @@ class Article
      * @Assert\NotBlank(groups={"Create"})
      *
      * @Serializer\Expose()
+     * @Serializer\Since("1.0")
      */
     private $content;
 
@@ -95,6 +97,14 @@ class Article
      *
      */
     private $author;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     *
+     * @Serializer\Expose()
+     * @Serializer\Since("2.0")
+     */
+    private $shortDescription;
 
     public function getId(): ?int
     {
