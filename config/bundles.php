@@ -12,4 +12,5 @@ return [
     WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle::class => ['all' => true],
     Mcfedr\UuidParamConverterBundle\McfedrUuidParamConverterBundle::class => ['all' => true],
     Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle::class => ['all' => true],
+    Nelmio\ApiDocBundle\NelmioApiDocBundle::class => ['all' => true],
 ];
