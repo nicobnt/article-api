@@ -62,6 +62,11 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     embedded = @Hateoas\Embedded("expr(object.getAuthor())"),
  *     exclusion = @Hateoas\Exclusion(excludeIf = "expr(object.getAuthor() === null)")
  * )
+ *
+ * @Hateoas\Relation(
+ *     "weather",
+ *     embedded = @Hateoas\Embedded("expr(service('app.weather').getCurrent())")
+ * )
  */
 class Article
 {

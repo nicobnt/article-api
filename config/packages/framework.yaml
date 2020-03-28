@@ -14,3 +14,12 @@ framework:
     #fragments: true
     php_errors:
         log: true
+    http_client:
+        scoped_clients:
+            weather.client:
+                base_uri: 'http://api.openweathermap.org'
+                headers: { 'X-Powered-By': 'ACME App' }
+                max_redirects: 5
+                timeout: 30
+
+
