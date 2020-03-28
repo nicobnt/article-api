@@ -18,12 +18,12 @@ class ArticleRepository extends AbstractRepository
         parent::__construct($registry, Article::class);
     }
 
-    public function search($term, $order = 'asc', $limit = 20, $offset = 0)
+    public function search($term, $order = 'asc', $limit = 20, $page = 1)
     {
         $qb = $this
             ->createQueryBuilder('a')
             ->select('a')
-            ->orderBy('a.title', $order)
+            ->orderBy('a.id', $order)
         ;
 
         if ($term) {
@@ -33,7 +33,7 @@ class ArticleRepository extends AbstractRepository
             ;
         }
 
-        return $this->paginate($qb, $limit, $offset);
+        return $this->paginate($qb, $limit, $page);
     }
 
     // /**

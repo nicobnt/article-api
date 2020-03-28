@@ -15,7 +15,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -23,25 +22,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ArticleController extends AbstractFOSRestController
 {
     /**
-     * @Route("/api/article", name="article")
-     */
-    public function index()
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ArticleController.php',
-        ]);
-    }
-
-    /**
      * @Rest\Get(
      *      path="/api/articles/{id}",
-     *      name = "api_article_show",
+     *      name = "api_article_get",
      *      requirements={"id"="\d+"}
      * )
      * @Rest\View()
      */
-    public function show(Article $article)
+    public function getArticleAction(Article $article)
     {
         return $article;
     }
@@ -49,7 +37,7 @@ class ArticleController extends AbstractFOSRestController
     /**
      * @Rest\Post(
      *      path="/api/articles_create",
-     *      name="api_article_create"
+     *      name="api_article_create_form"
      * )
      * @Rest\View(statusCode="201")
      * @ParamConverter("article", converter="fos_rest.request_body")
@@ -75,7 +63,7 @@ class ArticleController extends AbstractFOSRestController
             Response::HTTP_CREATED,
             [
                 'Location' => $this->generateUrl(
-                    'api_article_show',
+                    'api_article_get',
                     ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL]
                 ),
             ]
@@ -85,7 +73,7 @@ class ArticleController extends AbstractFOSRestController
     /**
      * @Rest\Post(
      *      path="/api/articles",
-     *      name="api_article_create_fos"
+     *      name="api_article_create"
      * )
      * @Rest\View(statusCode="201")
      * @ParamConverter(
@@ -121,7 +109,7 @@ class ArticleController extends AbstractFOSRestController
             Response::HTTP_CREATED,
             [
                 'Location' => $this->generateUrl(
-                    'api_article_show',
+                    'api_article_get',
                     ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL]
                 ),
             ]
@@ -174,7 +162,7 @@ class ArticleController extends AbstractFOSRestController
             Response::HTTP_OK,
             [
                 'Location' => $this->generateUrl(
-                    'api_article_show',
+                    'api_article_get',
                     ['id' => $article->getId(), UrlGeneratorInterface::ABSOLUTE_URL]
                 ),
             ]
@@ -222,7 +210,7 @@ class ArticleController extends AbstractFOSRestController
             Response::HTTP_CREATED,
             [
                 'Location' => $this->generateUrl(
-                    'api_article_show',
+                    'api_article_get',
                     [
                         'id' => $article->getId(),
                     ]
@@ -249,25 +237,25 @@ class ArticleController extends AbstractFOSRestController
      * @Rest\QueryParam(
      *     name="limit",
      *     requirements="\d+",
-     *     default="5",
+     *     default="2",
      *     description="Max item per page"
      * )
      * @Rest\QueryParam(
-     *     name="offset",
+     *     name="page",
      *     requirements="\d+",
-     *     default="1",
+     *     default="2",
      *     description="The paginator offset"
      * )
      * @Rest\View(StatusCode = 200)
      */
-    public function listAction(ParamFetcherInterface $paramFetcher)
+    public function cgetAction(ParamFetcherInterface $paramFetcher)
     {
         $rm = $this->getDoctrine()->getRepository(Article::class);
         $pager = $rm->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
-            $paramFetcher->get('offset')
+            $paramFetcher->get('page')
         );
 
         return new Articles($pager);
